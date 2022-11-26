@@ -165,41 +165,12 @@ class CategoryView extends StatelessWidget {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
-                                                Text(
-                                                  '${category.lessonCount} lesson',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w200,
-                                                    fontSize: 12,
-                                                    letterSpacing: 0.27,
-                                                    color: InterfazAppTheme
-                                                        .grey,
-                                                  ),
-                                                ),
+                                               
                                                 Container(
                                                   child: Row(
                                                     children: <Widget>[
-                                                      Text(
-                                                        '${category.rating}',
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w200,
-                                                          fontSize: 18,
-                                                          letterSpacing: 0.27,
-                                                          color:
-                                                              InterfazAppTheme
-                                                                  .grey,
-                                                        ),
-                                                      ),
-                                                      Icon(
-                                                        Icons.star,
-                                                        color:
-                                                            InterfazAppTheme
-                                                                .nearlyBlue,
-                                                        size: 20,
-                                                      ),
+                                                    
+                                          
                                                     ],
                                                   ),
                                                 )
@@ -216,17 +187,7 @@ class CategoryView extends StatelessWidget {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
-                                                Text(
-                                                  '\$${category.money}',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 18,
-                                                    letterSpacing: 0.27,
-                                                    color:InterfazAppTheme
-                                                        .nearlyBlue,
-                                                  ),
-                                                ),
+                                            
                                                 Container(
                                                   decoration: BoxDecoration(
                                                     color: InterfazAppTheme

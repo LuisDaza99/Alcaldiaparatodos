@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'diseño_interfaz_app_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class InterfazHome extends StatefulWidget {
+class InterfazHomeEmail extends StatefulWidget {
   @override
   _InterfazHomeState createState() => _InterfazHomeState();
 }
 
-class _InterfazHomeState extends State<InterfazHome> {
+class _InterfazHomeState extends State<InterfazHomeEmail> {
   UserCredential userCredential;
 
   CategoryType categoryType = CategoryType.ui;
@@ -284,7 +284,7 @@ class _InterfazHomeState extends State<InterfazHome> {
                   ),
                 ),
                 Text(
-                  (user.displayName),
+                  (user.email),
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -299,9 +299,7 @@ class _InterfazHomeState extends State<InterfazHome> {
           Container(
             width: 60,
             height: 60,
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(user.photoURL),
-            ),
+            child: Image.asset('assets/design_course/userImage.png'),
           )
         ],
       ),

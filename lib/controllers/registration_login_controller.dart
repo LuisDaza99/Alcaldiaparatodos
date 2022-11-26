@@ -20,22 +20,22 @@ class LoginRegisterController extends GetxController {
     super.dispose();
   }
 
-  void register() async {
+  Future<User> register() async {
     try {
       final User user = (await _auth.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       ))
           .user;
-      Get.snackbar('Bienvenido', 'Su registro ha sido exitoso');
+      Get.snackbar('Bienvenido', ' ${user.email} Su registro ha sido exitoso');
       print('registro Exitoso');
       Future.delayed(
         Duration(seconds: 2),
         () {
-          Get.toNamed("/principalpage");
+          Get.toNamed("/principalpage2", arguments: user);
         },
       );
-      userEmail = user.email;
+      return user;
     } catch (e) {
       Get.snackbar('Error', 'Correo invalido',
           snackPosition: SnackPosition.BOTTOM);

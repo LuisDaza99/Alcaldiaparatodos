@@ -113,7 +113,7 @@ class _InterfazInfoState extends State<InterfazInfo>
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Text(
-                                  '\$28.99',
+                                  'Yolima Rangel',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w200,
@@ -122,27 +122,7 @@ class _InterfazInfoState extends State<InterfazInfo>
                                     color: InterfazAppTheme.nearlyBlue,
                                   ),
                                 ),
-                                Container(
-                                  child: Row(
-                                    children: <Widget>[
-                                      Text(
-                                        '4.3',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w200,
-                                          fontSize: 22,
-                                          letterSpacing: 0.27,
-                                          color: InterfazAppTheme.grey,
-                                        ),
-                                      ),
-                                      Icon(
-                                        Icons.star,
-                                        color: InterfazAppTheme.nearlyBlue,
-                                        size: 24,
-                                      ),
-                                    ],
-                                  ),
-                                )
+                               
                               ],
                             ),
                           ),
@@ -153,9 +133,9 @@ class _InterfazInfoState extends State<InterfazInfo>
                               padding: const EdgeInsets.all(8),
                               child: Row(
                                 children: <Widget>[
-                                  getTimeBoxUI('24', 'Classe'),
-                                  getTimeBoxUI('2hours', 'Time'),
-                                  getTimeBoxUI('24', 'Seat'),
+                                  getTimeBoxUI('text'),
+                                  getTimeBoxUI('text'),
+                                  getTimeBoxUI('text'),
                                 ],
                               ),
                             ),
@@ -234,7 +214,7 @@ class _InterfazInfoState extends State<InterfazInfo>
                                       ),
                                       child: Center(
                                         child: Text(
-                                          'Join Course',
+                                          'Siguiente',
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
@@ -273,17 +253,7 @@ class _InterfazInfoState extends State<InterfazInfo>
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50.0)),
                   elevation: 10.0,
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    child: Center(
-                      child: Icon(
-                        Icons.favorite,
-                        color: InterfazAppTheme.nearlyWhite,
-                        size: 30,
-                      ),
-                    ),
-                  ),
+              
                 ),
               ),
             ),
@@ -314,7 +284,7 @@ class _InterfazInfoState extends State<InterfazInfo>
     );
   }
 
-  Widget getTimeBoxUI(String text1, String txt2) {
+  Widget getTimeBoxUI(String txt2) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -335,16 +305,7 @@ class _InterfazInfoState extends State<InterfazInfo>
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(
-                text1,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  letterSpacing: 0.27,
-                  color: InterfazAppTheme.nearlyBlue,
-                ),
-              ),
+            
               Text(
                 txt2,
                 textAlign: TextAlign.center,

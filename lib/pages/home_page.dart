@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    
         children: <Widget>[
           SizedBox(
             height: 100,

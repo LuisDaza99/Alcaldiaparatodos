@@ -14,21 +14,22 @@ class LoginController extends GetxController {
   final GoogleSignIn googleUser = GoogleSignIn();
 
   // Example code of how to sign in with email and password.
-  void signInWithEmailAndPassword() async {
+  Future<User> signInWithEmailAndPassword() async {
     try {
       final User user = (await _auth.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       ))
           .user;
-      Get.snackbar('Bienvenido', 'Su ingreso ha sido exitoso');
+      Get.snackbar('Bienvenido', ' ${user.email} Su ingreso ha sido exitoso');
       print('Ingreso Exitoso');
       Future.delayed(
         Duration(seconds: 2),
         () {
-          Get.toNamed("/principalpage");
+          Get.toNamed("/principalpage2", arguments: user);
         },
       );
+      return user;
     } catch (e) {
       Get.snackbar('Error', 'Correo o contraseña Invalido',
           snackPosition: SnackPosition.BOTTOM);
@@ -82,14 +83,13 @@ class LoginController extends GetxController {
           GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
-        
       );
       userCredential = await _auth.signInWithCredential(googleAuthCredential);
 
       final user = userCredential.user;
       Get.snackbar('Hola', 'Se registro ${user.displayName} con Google');
       print('Ingreso Exitoso');
-      
+
       Future.delayed(
         Duration(seconds: 2),
         () {
