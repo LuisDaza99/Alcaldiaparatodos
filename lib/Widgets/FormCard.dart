@@ -73,7 +73,7 @@ class FormCard extends StatelessWidget {
                     fontSize: ScreenUtil().setSp(26))),
             TextFormField(
                         controller: controller.passwordController,
-                        keyboardType: TextInputType.number,
+                        
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                         ],

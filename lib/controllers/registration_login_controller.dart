@@ -1,3 +1,4 @@
+import 'package:MiAlcaldia/Widgets/snackbar/error_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,14 +21,14 @@ class LoginRegisterController extends GetxController {
   }
 
   void register() async {
-    final User user = (await _auth.createUserWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-    ))
-        .user;
-    if (user != null) {
-      success = true;
-      print('Registro Ok');
+    try {
+      final User user = (await _auth.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      ))
+          .user;
+      Get.snackbar('Bienvenido', 'Su registro ha sido exitoso');
+      print('registro Exitoso');
       Future.delayed(
         Duration(seconds: 2),
         () {
@@ -35,8 +36,9 @@ class LoginRegisterController extends GetxController {
         },
       );
       userEmail = user.email;
-    } else {
-      success = false;
+    } catch (e) {
+      Get.snackbar('Error', 'Correo invalido',
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
 }

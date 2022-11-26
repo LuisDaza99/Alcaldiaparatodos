@@ -21,8 +21,8 @@ class LoginController extends GetxController {
         password: passwordController.text,
       ))
           .user;
-      Get.snackbar('Hola', 'Su ingreso ha sido exitoso');
-      print('Ingreso bien');
+      Get.snackbar('Bienvenido', 'Su ingreso ha sido exitoso');
+      print('Ingreso Exitoso');
       Future.delayed(
         Duration(seconds: 2),
         () {
@@ -30,7 +30,7 @@ class LoginController extends GetxController {
         },
       );
     } catch (e) {
-      Get.snackbar('Fallo', 'No puede ingresar, revise',
+      Get.snackbar('Error', 'Correo o contraseña Invalido',
           snackPosition: SnackPosition.BOTTOM);
     }
   }
@@ -43,13 +43,13 @@ class LoginController extends GetxController {
   void signOut() async {
     final User user = await _auth.currentUser;
     if (user == null) {
-      Get.snackbar('Out', 'No one has signed in.',
+      Get.snackbar('Exit', 'No ha iniciado sesión.',
           snackPosition: SnackPosition.BOTTOM);
       return;
     }
     _signOut();
     final String uid = user.uid;
-    Get.snackbar('Out', uid + ' has successfully signed out.',
+    Get.snackbar('Out', uid + ' Ha cerrado la sesión con éxito.',
         snackPosition: SnackPosition.BOTTOM);
     Get.toNamed("/home");
   }
@@ -58,7 +58,7 @@ class LoginController extends GetxController {
   Future<void> signOutGoogle() async {
     await googleUser.signOut();
 
-    print(" User Signed Out, Google.");
+    print(" Usuario cerrado, Google.");
   }
 
 //getUserGoogle
@@ -71,7 +71,7 @@ class LoginController extends GetxController {
   }
 
   //Example code of how to sign in with Google.
-  void signInWithGoogle() async {
+  Future<User> signInWithGoogle() async {
     try {
       UserCredential userCredential;
 
@@ -82,22 +82,25 @@ class LoginController extends GetxController {
           GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
+        
       );
       userCredential = await _auth.signInWithCredential(googleAuthCredential);
 
       final user = userCredential.user;
-      Get.snackbar('Hola', 'Sign In ${user.uid} with Google');
-      print('Ingreso bien');
+      Get.snackbar('Hola', 'Se registro ${user.displayName} con Google');
+      print('Ingreso Exitoso');
+      
       Future.delayed(
         Duration(seconds: 2),
         () {
-          Get.toNamed("/principalpage");
+          Get.toNamed("/principalpage", arguments: user);
         },
       );
+      return userCredential.user;
     } catch (e) {
       print(e);
 
-      Get.snackbar('Fallo', 'Failed to sign in with Google: $e',
+      Get.snackbar('Error', 'Error al iniciar sesion con Google: $e',
           snackPosition: SnackPosition.BOTTOM);
     }
   }

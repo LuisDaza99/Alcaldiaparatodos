@@ -3,10 +3,10 @@ import 'diseño_interfaz_app_theme.dart';
 
 class InterfazInfo extends StatefulWidget {
   @override
-  _CourseInfoScreenState createState() => _CourseInfoScreenState();
+  _InterfazInfoState createState() => _InterfazInfoState();
 }
 
-class _CourseInfoScreenState extends State<InterfazInfo>
+class _InterfazInfoState extends State<InterfazInfo>
     with TickerProviderStateMixin {
   final double infoHeight = 364.0;
   AnimationController animationController;
@@ -95,7 +95,7 @@ class _CourseInfoScreenState extends State<InterfazInfo>
                             padding: const EdgeInsets.only(
                                 top: 32.0, left: 18, right: 16),
                             child: Text(
-                              'Web Design\nCourse',
+                              'Regimen\nSubsidiado',
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,

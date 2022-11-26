@@ -4,15 +4,19 @@ import 'package:MiAlcaldia/interfazUsuario/populares_interfaz_lista.dart';
 import 'package:MiAlcaldia/main.dart';
 import 'package:flutter/material.dart';
 import 'diseño_interfaz_app_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class InterfazHome extends StatefulWidget {
   @override
-  _DesignCourseHomeScreenState createState() => _DesignCourseHomeScreenState();
+  _InterfazHomeState createState() => _InterfazHomeState();
 }
 
-class _DesignCourseHomeScreenState extends State<InterfazHome> {
-  CategoryType categoryType = CategoryType.ui;
+class _InterfazHomeState extends State<InterfazHome> {
+  UserCredential userCredential;
 
+  
+  CategoryType categoryType = CategoryType.ui;
+   final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -55,7 +59,7 @@ class _DesignCourseHomeScreenState extends State<InterfazHome> {
         Padding(
           padding: const EdgeInsets.only(top: 8.0, left: 18, right: 16),
           child: Text(
-            'Category',
+            'Portafolio de servicios',
             textAlign: TextAlign.left,
             style: TextStyle(
               fontWeight: FontWeight.w600,
@@ -106,7 +110,7 @@ class _DesignCourseHomeScreenState extends State<InterfazHome> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            'Popular Course',
+            'Dependencias',
             textAlign: TextAlign.left,
             style: TextStyle(
               fontWeight: FontWeight.w600,
@@ -139,11 +143,11 @@ class _DesignCourseHomeScreenState extends State<InterfazHome> {
   Widget getButtonUI(CategoryType categoryTypeData, bool isSelected) {
     String txt = '';
     if (CategoryType.ui == categoryTypeData) {
-      txt = 'Ui/Ux';
+      txt = 'Como llegar';
     } else if (CategoryType.coding == categoryTypeData) {
-      txt = 'Coding';
+      txt = 'Pagina Web';
     } else if (CategoryType.basic == categoryTypeData) {
-      txt = 'Basic UI';
+      txt = 'About us';
     }
     return Expanded(
       child: Container(
@@ -259,18 +263,24 @@ class _DesignCourseHomeScreenState extends State<InterfazHome> {
     );
   }
 
+ 
   Widget getAppBarUI() {
+   
+     User user = ModalRoute.of(context).settings.arguments;
     return Padding(
       padding: const EdgeInsets.only(top: 8.0, left: 18, right: 18),
       child: Row(
+        
         children: <Widget>[
+          
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
+              
               children: <Widget>[
                 Text(
-                  'Choose your',
+                  'Bienvenido',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
@@ -280,7 +290,8 @@ class _DesignCourseHomeScreenState extends State<InterfazHome> {
                   ),
                 ),
                 Text(
-                  'Design Course',
+                  (user.displayName),
+                  
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -289,19 +300,28 @@ class _DesignCourseHomeScreenState extends State<InterfazHome> {
                     color: InterfazAppTheme.darkerText,
                   ),
                 ),
+                
               ],
+              
             ),
           ),
           Container(
             width: 60,
             height: 60,
-            child: Image.asset('assets/design_course/userImage.png'),
+            child: CircleAvatar(
+            backgroundImage: NetworkImage(user.photoURL),
+          ),
           )
         ],
       ),
+      
     );
+    
   }
+  
 }
+
+
 
 enum CategoryType {
   ui,
