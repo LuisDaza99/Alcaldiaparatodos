@@ -1,37 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:async';
-import 'package:MiAlcaldia/ui/product_screen.dart';
-import 'package:MiAlcaldia/ui/product_information.dart';
-import 'package:MiAlcaldia/model/product.dart';
 
-class ListViewProduct extends StatefulWidget {
+import 'package:MiAlcaldia/model/funcionario.dart';
+
+import 'funcionario_information.dart';
+import 'funcionario_screen.dart';
+
+class ListViewFuncionario extends StatefulWidget {
   @override
-  _ListViewProductState createState() => _ListViewProductState();
+  _ListViewFuncionarioState createState() => _ListViewFuncionarioState();
 }
 
-final productReference = FirebaseDatabase.instance.reference().child('product');
+final funcionarioReference = FirebaseDatabase.instance.reference().child('funcionario');
 
-class _ListViewProductState extends State<ListViewProduct> {
-  List<Product> items;
-  StreamSubscription<Event> _onProductAddedSubscription;
-  StreamSubscription<Event> _onProductChangedSubscription;
+class _ListViewFuncionarioState extends State<ListViewFuncionario> {
+  List<Funcionario> items;
+  StreamSubscription<Event> _onFuncionarioAddedSubscription;
+  StreamSubscription<Event> _onFuncionarioChangedSubscription;
 
   @override
   void initState() {
     super.initState();
     items = new List();
-    _onProductAddedSubscription =
-        productReference.onChildAdded.listen(_onProductAdded);
-    _onProductChangedSubscription =
-        productReference.onChildChanged.listen(_onProductUpdate);
+    _onFuncionarioAddedSubscription =
+        funcionarioReference.onChildAdded.listen(_onFuncionarioAdded);
+    _onFuncionarioChangedSubscription =
+        funcionarioReference.onChildChanged.listen(_onFuncionarioUpdate);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _onProductAddedSubscription.cancel();
-    _onProductChangedSubscription.cancel();
+    _onFuncionarioAddedSubscription.cancel();
+    _onFuncionarioChangedSubscription.cancel();
   }
 
   @override
@@ -39,7 +41,7 @@ class _ListViewProductState extends State<ListViewProduct> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Products List'),
+          title: Text('Todos los funcionarios'),
           centerTitle: true,
           backgroundColor: Colors.pinkAccent,          
         ),
@@ -61,10 +63,10 @@ class _ListViewProductState extends State<ListViewProduct> {
                             //nuevo imagen
                              new Container( 
                               padding: new EdgeInsets.all(5.0),                          
-                              child: '${items[position].productImage}' == ''
+                              child: '${items[position].funcionarioImage}' == ''
                                   ? Text('No image')
                                   : Image.network(
-                                      '${items[position].productImage}' +
+                                      '${items[position].funcionarioImage}' +
                                           '?alt=media',
                                           fit: BoxFit.fill,
                                       height: 57.0,
@@ -74,20 +76,20 @@ class _ListViewProductState extends State<ListViewProduct> {
                             Expanded(
                               child: ListTile(
                                   title: Text(
-                                    '${items[position].name}',
+                                    '${items[position].nombre}',
                                     style: TextStyle(
                                       color: Colors.blueAccent,
                                       fontSize: 21.0,
                                     ),
                                   ),
                                   subtitle: Text(
-                                    '${items[position].description}',
+                                    '${items[position].cargo}',
                                     style: TextStyle(
                                       color: Colors.blueGrey,
                                       fontSize: 21.0,
                                     ),
                                   ),
-                                  onTap: () => _navigateToProductInformation(
+                                  onTap: () => _navigateToFuncionarioInformation(
                                       context, items[position])),
                             ),
                             IconButton(
@@ -98,14 +100,14 @@ class _ListViewProductState extends State<ListViewProduct> {
                                 onPressed: () => _showDialog(context, position),
                                 ),
                                 
-                            //onPressed: () => _deleteProduct(context, items[position],position)),
+                            //onPressed: () => _deleteFuncionarios(context, items[position],position)),
                             IconButton(
                                 icon: Icon(
                                   Icons.remove_red_eye,
                                   color: Colors.blueAccent,
                                 ),
                                 onPressed: () =>
-                                    _navigateToProduct(context, items[position])),
+                                    _navigateToFuncionario(context, items[position])),
                           ],
                         ),
                         color: Colors.white,
@@ -121,7 +123,7 @@ class _ListViewProductState extends State<ListViewProduct> {
             color: Colors.white,
           ),
           backgroundColor: Colors.pinkAccent,
-          onPressed: () => _createNewProduct(context),
+          onPressed: () => _createNewFuncionario(context),
         ),
       ),
     );
@@ -142,7 +144,7 @@ class _ListViewProductState extends State<ListViewProduct> {
                   color: Colors.purple,
                 ),
                 onPressed: () =>
-                  _deleteProduct(context, items[position], position,),                                        
+                  _deleteFuncionario(context, items[position], position,),                                        
                     ),                   
             new TextButton(
               child: Text('Cancel'),
@@ -156,24 +158,24 @@ class _ListViewProductState extends State<ListViewProduct> {
     );
   }
 
-  void _onProductAdded(Event event) {
+  void _onFuncionarioAdded(Event event) {
     setState(() {
-      items.add(new Product.fromSnapShot(event.snapshot));
+      items.add(new Funcionario.fromSnapShot(event.snapshot));
     });
   }
 
-  void _onProductUpdate(Event event) {
-    var oldProductValue =
-        items.singleWhere((product) => product.id == event.snapshot.key);
+  void _onFuncionarioUpdate(Event event) {
+    var oldFuncionarioValue =
+        items.singleWhere((funcionario) => funcionario.id == event.snapshot.key);
     setState(() {
-      items[items.indexOf(oldProductValue)] =
-          new Product.fromSnapShot(event.snapshot);
+      items[items.indexOf(oldFuncionarioValue)] =
+          new Funcionario.fromSnapShot(event.snapshot);
     });
   }
 
-  void _deleteProduct(
-      BuildContext context, Product product, int position) async {
-    await productReference.child(product.id).remove().then((_) {
+  void _deleteFuncionario(
+      BuildContext context, Funcionario funcionario, int position) async {
+    await funcionarioReference.child(funcionario.id).remove().then((_) {
       setState(() {
         items.removeAt(position);
         Navigator.of(context).pop();
@@ -181,27 +183,27 @@ class _ListViewProductState extends State<ListViewProduct> {
     });
   }
 
-  void _navigateToProductInformation(
-      BuildContext context, Product product) async {
+  void _navigateToFuncionarioInformation(
+      BuildContext context, Funcionario funcionario) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ProductScreen(product)),
+      MaterialPageRoute(builder: (context) => FuncionarioScreen(funcionario)),
     );
   }
 
-  void _navigateToProduct(BuildContext context, Product product) async {
+  void _navigateToFuncionario(BuildContext context, Funcionario funcionario) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ProductInformation(product)),
+      MaterialPageRoute(builder: (context) => FuncionarioInformation(funcionario)),
     );
   }
 
-  void _createNewProduct(BuildContext context) async {
+  void _createNewFuncionario(BuildContext context) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) =>
-              ProductScreen(Product(null, '', '', '', '', '', ''))),
+              FuncionarioScreen(Funcionario(null, '', '', '', '', '', ''))),
     );
   }
 

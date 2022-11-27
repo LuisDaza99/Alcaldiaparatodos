@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "746363711706",
+    "firebase_url": "https://alcaldia-para-todos-default-rtdb.firebaseio.com",
     "project_id": "alcaldia-para-todos",
     "storage_bucket": "alcaldia-para-todos.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "746363711706-docbbffdava55vj4a2cu8l7qld9g8210.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alcaldia",
+            "certificate_hash": "658af9adb207f61e788b58f55cff59e88740af30"
+          }
+        },
         {
           "client_id": "746363711706-91p2cu5kgc3puc526gkno2dcpvsd0ok0.apps.googleusercontent.com",
           "client_type": 3
@@ -31,10 +40,10 @@
               "client_type": 3
             },
             {
-              "client_id": "746363711706-klqvg5842rfpfr2mgejqsku2or2c4n2q.apps.googleusercontent.com",
+              "client_id": "746363711706-3k419stbpts410om7sba6qeh2mgh616b.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.flutterLoginPageUi"
+                "bundle_id": "com.example.bestFlutterUiTemplates"
               }
             }
           ]
