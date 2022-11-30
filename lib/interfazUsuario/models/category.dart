@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+
 class Category {
   Category({
     this.title = '',
@@ -7,8 +10,10 @@ class Category {
 
   String title;
   String imagePath;
+  
 
   static List<Category> categoryList = <Category>[
+    
     Category(
       imagePath: 'assets/design_course/interFace1.png',
       title: 'Mi Municipio',
@@ -23,10 +28,14 @@ class Category {
 
     ),
     Category(
+      
       imagePath: 'assets/design_course/interFace2.png',
-      title: 'Calendario',
+      title: 'Calendario' ,
+      
     ),
+    
   ];
+
 
   static List<Category> popularCourseList = <Category>[
     Category(

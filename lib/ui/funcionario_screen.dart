@@ -25,29 +25,10 @@ class _FuncionarioScreenState extends State<FuncionarioScreen> {
   var _currentSelectedDate;
   DateTime picked;
 
-  void callDatePicker() async {
-    var selectedDate = await getDatePickerWidget();
-    setState(() {
-      _currentSelectedDate = selectedDate;
-    });
-  }
-
-  Future<DateTime> getDatePickerWidget() {
-    return showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1800),
-      lastDate: DateTime(2022),
-      builder: (context, child) {
-        return Theme(data: ThemeData.dark(), child: child);
-      },
-    );
-  }
-
   void _pickDateDialog() async {
     picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: DateTime.utc(2000, 1, 1),
       firstDate: DateTime(1600),
       lastDate: DateTime(2100),
     );
@@ -266,7 +247,6 @@ class _FuncionarioScreenState extends State<FuncionarioScreen> {
                           'fechanacimiento': _fechanacimientoController.text,
                           'FuncionarioImage': '$fullPathImage' //nuevo imagen
                         }).then((_) {
-                          
                           Navigator.pop(context);
                         });
                       }

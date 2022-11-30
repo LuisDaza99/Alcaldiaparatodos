@@ -93,7 +93,7 @@ class LoginController extends GetxController {
       Future.delayed(
         Duration(seconds: 2),
         () {
-          Get.toNamed("/principalpage", arguments: user);
+          Get.toNamed("/municipio", arguments: user);
         },
       );
       return userCredential.user;
