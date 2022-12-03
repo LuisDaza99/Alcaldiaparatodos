@@ -226,7 +226,7 @@ class _InterfazHomeState extends State<InterfazHomeEmail> {
                           ),
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                            labelText: 'Buscar una dependencia',
+                            labelText: 'Buscar dependencia',
                             border: InputBorder.none,
                             helperStyle: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -299,7 +299,7 @@ class _InterfazHomeState extends State<InterfazHomeEmail> {
           Container(
             width: 60,
             height: 60,
-            child: Image.asset('assets/design_course/userImage.png'),
+            child: Image.asset('assets/diseño_interfaz/userImage.png'),
           )
         ],
       ),

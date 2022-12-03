@@ -226,7 +226,7 @@ class _InterfazHomeState extends State<InterfazHome> {
                           ),
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                            labelText: 'Buscar una dependencia',
+                            labelText: 'Buscar dependencia',
                             border: InputBorder.none,
                             helperStyle: TextStyle(
                               fontWeight: FontWeight.bold,

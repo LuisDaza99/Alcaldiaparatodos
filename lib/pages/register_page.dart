@@ -1,12 +1,11 @@
 import 'package:MiAlcaldia/controllers/login_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
+
 import 'package:get/get.dart';
 import 'package:MiAlcaldia/controllers/registration_login_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:MiAlcaldia/Widgets/FormCard2.dart';
 import '../CustomIcons.dart';
 

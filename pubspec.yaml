@@ -37,7 +37,7 @@ dependencies:
     firebase_storage: ^5.2.0
     table_calendar: ^3.0.3
     google_maps_flutter: ^2.0.6
-    audioplayers: ^0.17.4
+    audioplayer: ^0.8.1
     
     
     
@@ -74,10 +74,7 @@ flutter:
     assets:
         - assets/
         - assets/images/
-        - assets/design_course/
-        - assets/fitness_app/
-        - assets/hotel/
-        - assets/introduction_animation/
+        - assets/diseño_interfaz/
         - assets/image_01.png
         - assets/image_02.png
         - assets/logoo.png

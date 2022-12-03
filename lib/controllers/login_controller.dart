@@ -9,6 +9,7 @@ class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final formKey = GlobalKey<FormState>();
+  
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final GoogleSignIn googleUser = GoogleSignIn();
@@ -26,7 +27,7 @@ class LoginController extends GetxController {
       Future.delayed(
         Duration(seconds: 2),
         () {
-          Get.toNamed("/principalpage2", arguments: user);
+          Get.toNamed("/principalpage1", arguments: user);
         },
       );
       return user;
@@ -93,7 +94,7 @@ class LoginController extends GetxController {
       Future.delayed(
         Duration(seconds: 2),
         () {
-          Get.toNamed("/municipio", arguments: user);
+          Get.toNamed("/simbolos", arguments: user);
         },
       );
       return userCredential.user;

@@ -56,7 +56,7 @@ class _InterfazInfoState extends State<InterfazInfo>
               children: <Widget>[
                 AspectRatio(
                   aspectRatio: 1.2,
-                  child: Image.asset('assets/design_course/webInterFace.png'),
+                  child: Image.asset('assets/diseño_interfaz/webInterFace.png'),
                 ),
               ],
             ),

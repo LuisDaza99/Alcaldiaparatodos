@@ -1,9 +1,16 @@
+import 'dart:async';
 import 'dart:developer';
-
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'dart:typed_data';
+import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
 import '../../interfazUsuario/diseño_interfaz_app_theme.dart';
+
+typedef void OnError(Exception exception);
+
+const kUrl =
+    "https://firebasestorage.googleapis.com/v0/b/alcaldia-para-todos.appspot.com/o/mp3%2FMiMunicipio.mp3?alt=media&token=b3231e19-d3c8-46e4-b32f-dea22afffcf7";
+
+enum PlayerState { stopped, playing, paused }
 
 class MiMunicipio extends StatefulWidget {
   @override
@@ -12,13 +19,31 @@ class MiMunicipio extends StatefulWidget {
 
 class _MunicipioState extends State<MiMunicipio> with TickerProviderStateMixin {
   final double infoHeight = 364.0;
-  final player = AudioCache();
-  final playerx = new AudioCache(fixedPlayer: AudioPlayer());
   AnimationController animationController;
   Animation<double> animation;
+  Duration duration;
+  Duration position;
+  String localFilePath;
+  AudioPlayer audioPlayer;
+  PlayerState playerState = PlayerState.stopped;
+  get isPlaying => playerState == PlayerState.playing;
+  get isPaused => playerState == PlayerState.paused;
+
+  get durationText =>
+      duration != null ? duration.toString().split('.').first : '';
+
+  get positionText =>
+      position != null ? position.toString().split('.').first : '';
+
+  bool isMuted = false;
+
+  StreamSubscription _positionSubscription;
+  StreamSubscription _audioPlayerStateSubscription;
+
   double opacity1 = 0.0;
   double opacity2 = 0.0;
   double opacity3 = 0.0;
+
   @override
   void initState() {
     animationController = AnimationController(
@@ -28,6 +53,74 @@ class _MunicipioState extends State<MiMunicipio> with TickerProviderStateMixin {
         curve: Interval(0, 1.0, curve: Curves.fastOutSlowIn)));
     setData();
     super.initState();
+    initAudioPlayer();
+  }
+
+  @override
+  void dispose() {
+    _positionSubscription.cancel();
+    _audioPlayerStateSubscription.cancel();
+    audioPlayer.stop();
+    super.dispose();
+  }
+
+  void initAudioPlayer() {
+    audioPlayer = AudioPlayer();
+    _positionSubscription = audioPlayer.onAudioPositionChanged
+        .listen((p) => setState(() => position = p));
+    _audioPlayerStateSubscription =
+        audioPlayer.onPlayerStateChanged.listen((s) {
+      if (s == AudioPlayerState.PLAYING) {
+        setState(() => duration = audioPlayer.duration);
+      } else if (s == AudioPlayerState.STOPPED) {
+        onComplete();
+        setState(() {
+          position = duration;
+        });
+      }
+    }, onError: (msg) {
+      setState(() {
+        playerState = PlayerState.stopped;
+        duration = Duration(seconds: 0);
+        position = Duration(seconds: 0);
+      });
+    });
+  }
+
+  Future play() async {
+    await audioPlayer.play(kUrl);
+    setState(() {
+      playerState = PlayerState.playing;
+    });
+  }
+
+  Future _playLocal() async {
+    await audioPlayer.play(localFilePath, isLocal: true);
+    setState(() => playerState = PlayerState.playing);
+  }
+
+  Future pause() async {
+    await audioPlayer.pause();
+    setState(() => playerState = PlayerState.paused);
+  }
+
+  Future stop() async {
+    await audioPlayer.stop();
+    setState(() {
+      playerState = PlayerState.stopped;
+      position = Duration();
+    });
+  }
+
+  Future mute(bool muted) async {
+    await audioPlayer.mute(muted);
+    setState(() {
+      isMuted = muted;
+    });
+  }
+
+  void onComplete() {
+    setState(() => playerState = PlayerState.stopped);
   }
 
   Future<void> setData() async {
@@ -61,7 +154,7 @@ class _MunicipioState extends State<MiMunicipio> with TickerProviderStateMixin {
               children: <Widget>[
                 AspectRatio(
                   aspectRatio: 1.2,
-                  child: Image.asset('assets/design_course/MiMunicipio.jpeg'),
+                  child: Image.asset('assets/diseño_interfaz/MiMunicipio.jpeg'),
                 ),
               ],
             ),
@@ -72,7 +165,7 @@ class _MunicipioState extends State<MiMunicipio> with TickerProviderStateMixin {
               right: 0,
               child: Container(
                 decoration: BoxDecoration(
-                  color: InterfazAppTheme.nearlyWhite,
+                  color: Color.fromARGB(255, 226, 232, 235),
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(32.0),
                       topRight: Radius.circular(32.0)),
@@ -100,7 +193,7 @@ class _MunicipioState extends State<MiMunicipio> with TickerProviderStateMixin {
                             padding: const EdgeInsets.only(
                                 top: 32.0, left: 18, right: 16),
                             child: Text(
-                              'Chimichagua\nCesar',
+                              'CHIMICHAGUA\nCESAR',
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
@@ -117,68 +210,25 @@ class _MunicipioState extends State<MiMunicipio> with TickerProviderStateMixin {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                IconButton(
-                                    icon: Icon(Icons.play_arrow),
-                                    onPressed: () {
-                                      playerx.play('MiMunicipio.mp3');
-                                    }),
-                                IconButton(
-                                    icon: Icon(Icons.audiotrack),
-                                    onPressed: () {
-                                      playerx.play('Himno.mp3');
-                                    }),
-                                IconButton(
-                                    icon: Icon(Icons.pause),
-                                    onPressed: () {
-                                      playerx.fixedPlayer.stop();
-                                    }),
+                                Material(child: _buildPlayer()),
+                                if (localFilePath != null)
+                                  IconButton(
+                                    onPressed: () => _playLocal(),
+                                  ),
                               ],
                             ),
                           ),
-                          AnimatedOpacity(
-                            duration: const Duration(milliseconds: 500),
-                            opacity: opacity1,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Row(
-                                children: <Widget>[
-                                  FloatingActionButton.extended(
-                                    label: Text('Prcion'), // <-- Text
-                                    backgroundColor: Colors.lightBlueAccent,
-                                    icon: Icon(
-                                      // <-- Icon
-                                      Icons.play_arrow,
-                                      size: 24.0,
-                                    ),
-                                    onPressed: () {
-                                      playerx.play('MiMunicipio.mp3');
-                                    },
-                                  ),
-                                  FloatingActionButton.extended(
-                                    label: Text('Himno'), // <-- Text
-                                    backgroundColor: Colors.lightBlueAccent,
-                                    icon: Icon(
-                                      // <-- Icon
-                                      Icons.play_arrow,
-                                      size: 24.0,
-                                    ),
-                                    onPressed: () {
-                                      playerx.play('Himno.mp3');
-                                    },
-                                  ),
-                                  FloatingActionButton.extended(
-                                    label: Text('Stop'), // <-- Text
-                                    backgroundColor: Colors.lightBlueAccent,
-                                    icon: Icon(
-                                      // <-- Icon
-                                      Icons.play_arrow,
-                                      size: 24.0,
-                                    ),
-                                    onPressed: () {
-                                      playerx.fixedPlayer.stop();
-                                    },
-                                  ),
-                                ],
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 32.0, left: 18, right: 16),
+                            child: Text(
+                              'Chimichagua, Gobierno al servicio de todos.',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 17,
+                                letterSpacing: 0.27,
+                                color: InterfazAppTheme.darkerText,
                               ),
                             ),
                           ),
@@ -190,15 +240,15 @@ class _MunicipioState extends State<MiMunicipio> with TickerProviderStateMixin {
                                 padding: const EdgeInsets.only(
                                     left: 16, right: 16, top: 8, bottom: 8),
                                 child: Text(
-                                  'Lorem ipsum is simply dummy text of printing & typesetting industry, Lorem ipsum is simply dummy text of printing & typesetting industry.',
+                                  'Chimichagua es un pueblo encantador lleno de sitios naturales y lugares hermosos. Contamos con mujeres buenas y virtuosas, de hombres nobles y sanos, con muchos valores. Es muy satisfactorio para nosotros darles a conocer a ustedes la imagen de nuestro querido pueblo.',
                                   textAlign: TextAlign.justify,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w200,
-                                    fontSize: 14,
+                                    fontSize: 16,
                                     letterSpacing: 0.27,
-                                    color: InterfazAppTheme.grey,
+                                    color: InterfazAppTheme.nearlyBlack,
                                   ),
-                                  maxLines: 3,
+                                  maxLines: 9,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -323,41 +373,41 @@ class _MunicipioState extends State<MiMunicipio> with TickerProviderStateMixin {
     );
   }
 
-  Widget getTimeBoxUI(String txt2) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: InterfazAppTheme.nearlyWhite,
-          borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: InterfazAppTheme.grey.withOpacity(0.2),
-                offset: const Offset(1.1, 1.1),
-                blurRadius: 8.0),
+  Widget _buildPlayer() => Container(
+        color: Color.fromARGB(255, 216, 225, 228),
+        padding: EdgeInsets.all(0.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(mainAxisSize: MainAxisSize.min, children: [
+              IconButton(
+                onPressed: isPlaying ? null : () => play(),
+                iconSize: 40.0,
+                icon: Icon(Icons.play_arrow),
+                color: Colors.cyan,
+              ),
+              IconButton(
+                onPressed: isPlaying ? () => pause() : null,
+                iconSize: 40.0,
+                icon: Icon(Icons.pause),
+                color: Colors.cyan,
+              ),
+              IconButton(
+                onPressed: isPlaying || isPaused ? () => stop() : null,
+                iconSize: 40.0,
+                icon: Icon(Icons.stop),
+                color: Colors.cyan,
+              ),
+            ]),
+            if (duration != null)
+              Slider(
+                  value: position?.inMilliseconds?.toDouble() ?? 0.0,
+                  onChanged: (double value) {
+                    return audioPlayer.seek((value / 1000).roundToDouble());
+                  },
+                  min: 0.0,
+                  max: duration.inMilliseconds.toDouble()),
           ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.only(
-              left: 18.0, right: 18.0, top: 12.0, bottom: 12.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                txt2,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.w200,
-                  fontSize: 14,
-                  letterSpacing: 0.27,
-                  color: InterfazAppTheme.grey,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+      );
 }

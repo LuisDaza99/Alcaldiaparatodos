@@ -12,6 +12,7 @@ class LoginRegisterController extends GetxController {
 
   bool success;
   String userEmail;
+  
 
   void dispose() {
     // Clean up the controller when the Widget is disposed
@@ -32,7 +33,7 @@ class LoginRegisterController extends GetxController {
       Future.delayed(
         Duration(seconds: 2),
         () {
-          Get.toNamed("/principalpage2", arguments: user);
+          Get.toNamed("/principalpage1", arguments: user);
         },
       );
       return user;
