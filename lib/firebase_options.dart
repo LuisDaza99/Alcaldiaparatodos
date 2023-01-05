@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -46,20 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBcSM8R1EdslDP09P979U-juuwkZpyIxdM',
-    appId: '1:746363711706:web:690d0213fbac80a02f75e3',
-    messagingSenderId: '746363711706',
-    projectId: 'alcaldia-para-todos',
-    authDomain: 'alcaldia-para-todos.firebaseapp.com',
-    databaseURL: 'https://alcaldia-para-todos-default-rtdb.firebaseio.com',
-    storageBucket: 'alcaldia-para-todos.appspot.com',
-    measurementId: 'G-LQW3VKZV0P',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyABRJP2wBeIpEWC3tzpEug9rC2-F_BC_6E',
-    appId: '1:746363711706:android:4ea9123a0053900b2f75e3',
+    appId: '1:746363711706:android:1716ddec95d2fe932f75e3',
     messagingSenderId: '746363711706',
     projectId: 'alcaldia-para-todos',
     databaseURL: 'https://alcaldia-para-todos-default-rtdb.firebaseio.com',
@@ -68,12 +60,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyALA5aAEkFfCpdQv70Dt4CeQK55xKBIx1s',
-    appId: '1:746363711706:ios:b9d93c365a8cb08e2f75e3',
+    appId: '1:746363711706:ios:1496162d89f50e7e2f75e3',
     messagingSenderId: '746363711706',
     projectId: 'alcaldia-para-todos',
     databaseURL: 'https://alcaldia-para-todos-default-rtdb.firebaseio.com',
     storageBucket: 'alcaldia-para-todos.appspot.com',
-    androidClientId: '746363711706-docbbffdava55vj4a2cu8l7qld9g8210.apps.googleusercontent.com',
+    androidClientId: '746363711706-kfhc3qeo1eupvgmjts0o5got9q56tp9o.apps.googleusercontent.com',
     iosClientId: '746363711706-3k419stbpts410om7sba6qeh2mgh616b.apps.googleusercontent.com',
     iosBundleId: 'com.example.bestFlutterUiTemplates',
   );

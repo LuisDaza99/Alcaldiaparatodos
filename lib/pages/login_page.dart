@@ -42,7 +42,9 @@ class _LoginPageState extends State<LoginPage> {
                 decoration:
                     BoxDecoration(shape: BoxShape.circle, color: Colors.black),
               )
-            : Container(),
+            : Container(
+
+            ),
       );
 
   Widget horizontalLine() => Padding(
@@ -194,7 +196,9 @@ class _LoginPageState extends State<LoginPage> {
                           Color(0xFF00eaf8),
                         ],
                         iconData: CustomIcons.facebook,
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.toNamed("/simbolos");
+                        },
                       ),
                       SocialIcon(
                         colors: [
@@ -212,7 +216,9 @@ class _LoginPageState extends State<LoginPage> {
                           Color(0xFF6078ea),
                         ],
                         iconData: CustomIcons.twitter,
-                        onPressed: () {},
+                        onPressed: () async{
+                          LoginController().signInWithGoogle2();
+                        },
                       ),
                       SocialIcon(
                         colors: [

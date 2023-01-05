@@ -8,20 +8,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:746363711706:android:4ea9123a0053900b2f75e3",
+        "mobilesdk_app_id": "1:746363711706:android:1716ddec95d2fe932f75e3",
         "android_client_info": {
           "package_name": "com.example.alcaldia"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "746363711706-docbbffdava55vj4a2cu8l7qld9g8210.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.alcaldia",
-            "certificate_hash": "658af9adb207f61e788b58f55cff59e88740af30"
-          }
-        },
         {
           "client_id": "746363711706-91p2cu5kgc3puc526gkno2dcpvsd0ok0.apps.googleusercontent.com",
           "client_type": 3
@@ -43,7 +35,7 @@
               "client_id": "746363711706-3k419stbpts410om7sba6qeh2mgh616b.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.alcaldia"
+                "bundle_id": "com.example.bestFlutterUiTemplates"
               }
             }
           ]

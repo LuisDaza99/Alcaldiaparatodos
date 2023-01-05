@@ -2,39 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:async';
 
-import 'package:MiAlcaldia/model/funcionario.dart';
+import 'package:MiAlcaldia/model/cliente.dart';
+import 'package:MiAlcaldia/ui/cliente/cliente_information.dart';
+import 'package:MiAlcaldia/ui/cliente/cliente_screen.dart';
 
-import 'funcionario_information.dart';
-import 'funcionario_screen.dart';
-
-class ListViewFuncionario extends StatefulWidget {
+class ListViewCliente extends StatefulWidget {
   @override
-  _ListViewFuncionarioState createState() => _ListViewFuncionarioState();
+  _ListViewClienteState createState() => _ListViewClienteState();
 }
 
-final funcionarioReference =
-    FirebaseDatabase.instance.reference().child('funcionario');
+final clienteReference = FirebaseDatabase.instance.reference().child('cliente');
 
-class _ListViewFuncionarioState extends State<ListViewFuncionario> {
-  List<Funcionario> items;
-  StreamSubscription<Event> _onFuncionarioAddedSubscription;
-  StreamSubscription<Event> _onFuncionarioChangedSubscription;
+class _ListViewClienteState extends State<ListViewCliente> {
+  List<Cliente> items;
+  StreamSubscription<Event> _onClienteAddedSubscription;
+  StreamSubscription<Event> _onClienteChangedSubscription;
 
   @override
   void initState() {
     super.initState();
     items = new List();
-    _onFuncionarioAddedSubscription =
-        funcionarioReference.onChildAdded.listen(_onFuncionarioAdded);
-    _onFuncionarioChangedSubscription =
-        funcionarioReference.onChildChanged.listen(_onFuncionarioUpdate);
+    _onClienteAddedSubscription =
+        clienteReference.onChildAdded.listen(_onClienteAdded);
+    _onClienteChangedSubscription =
+        clienteReference.onChildChanged.listen(_onClienteUpdate);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _onFuncionarioAddedSubscription.cancel();
-    _onFuncionarioChangedSubscription.cancel();
+    _onClienteAddedSubscription.cancel();
+    _onClienteChangedSubscription.cancel();
   }
 
   @override
@@ -43,7 +41,7 @@ class _ListViewFuncionarioState extends State<ListViewFuncionario> {
       home: Scaffold(
         backgroundColor: Color.fromARGB(255, 175, 203, 216),
         appBar: AppBar(
-          title: Text('Todos los funcionarios'),
+          title: Text('Todos los clientes atendidos'),
           centerTitle: true,
           backgroundColor: Color.fromARGB(255, 38, 148, 192),
         ),
@@ -63,19 +61,20 @@ class _ListViewFuncionarioState extends State<ListViewFuncionario> {
                         elevation: 5,
                         child: Row(
                           children: <Widget>[
-                            //nuevo imagen
-                            new Container(
-                              padding: new EdgeInsets.all(5.0),
-                              child: '${items[position].funcionarioImage}' == ''
-                                  ? Text('No image')
-                                  : Image.network(
-                                      '${items[position].funcionarioImage}' +
-                                          '?alt=media',
-                                      fit: BoxFit.fill,
-                                      height: 57.0,
-                                      width: 57.0,
-                                    ),
+                            //nuevo contador
+                            CircleAvatar(
+                              backgroundColor:
+                                  Color.fromARGB(255, 175, 203, 216),
+                              radius: 17.0,
+                              child: Text(
+                                '${position + 1}',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 21.0,
+                                ),
+                              ),
                             ),
+
                             Expanded(
                               child: ListTile(
                                   title: Text(
@@ -86,15 +85,14 @@ class _ListViewFuncionarioState extends State<ListViewFuncionario> {
                                     ),
                                   ),
                                   subtitle: Text(
-                                    '${items[position].cargo}',
+                                    '${items[position].fechanacimiento}',
                                     style: TextStyle(
                                       color: Color.fromARGB(255, 56, 52, 52),
                                       fontSize: 21.0,
                                     ),
                                   ),
-                                  onTap: () =>
-                                      _navigateToFuncionarioInformation(
-                                          context, items[position])),
+                                  onTap: () => _navigateToClienteInformation(
+                                      context, items[position])),
                             ),
                             IconButton(
                               icon: Icon(
@@ -104,13 +102,13 @@ class _ListViewFuncionarioState extends State<ListViewFuncionario> {
                               onPressed: () => _showDialog(context, position),
                             ),
 
-                            //onPressed: () => _deleteFuncionarios(context, items[position],position)),
+                            //onPressed: () => _deleteCliente(context, items[position],position)),
                             IconButton(
                                 icon: Icon(
                                   Icons.remove_red_eye,
                                   color: Colors.blueAccent,
                                 ),
-                                onPressed: () => _navigateToFuncionario(
+                                onPressed: () => _navigateToCliente(
                                     context, items[position])),
                           ],
                         ),
@@ -127,7 +125,7 @@ class _ListViewFuncionarioState extends State<ListViewFuncionario> {
             color: Colors.white,
           ),
           backgroundColor: Color.fromARGB(255, 38, 148, 192),
-          onPressed: () => _createNewFuncionario(context),
+          onPressed: () => _createNewCliente(context),
         ),
       ),
     );
@@ -140,15 +138,14 @@ class _ListViewFuncionarioState extends State<ListViewFuncionario> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Alerta'),
-          content:
-              Text('Esta seguro de que quieres eliminar este funcionario?'),
+          content: Text('Esta seguro de que quieres eliminar este cliente?'),
           actions: <Widget>[
             IconButton(
               icon: Icon(
                 Icons.delete,
                 color: Colors.purple,
               ),
-              onPressed: () => _deleteFuncionario(
+              onPressed: () => _deleteCliente(
                 context,
                 items[position],
                 position,
@@ -166,24 +163,24 @@ class _ListViewFuncionarioState extends State<ListViewFuncionario> {
     );
   }
 
-  void _onFuncionarioAdded(Event event) {
+  void _onClienteAdded(Event event) {
     setState(() {
-      items.add(new Funcionario.fromSnapShot(event.snapshot));
+      items.add(new Cliente.fromSnapShot(event.snapshot));
     });
   }
 
-  void _onFuncionarioUpdate(Event event) {
-    var oldFuncionarioValue = items
-        .singleWhere((funcionario) => funcionario.id == event.snapshot.key);
+  void _onClienteUpdate(Event event) {
+    var oldClienteValue =
+        items.singleWhere((cliente) => cliente.id == event.snapshot.key);
     setState(() {
-      items[items.indexOf(oldFuncionarioValue)] =
-          new Funcionario.fromSnapShot(event.snapshot);
+      items[items.indexOf(oldClienteValue)] =
+          new Cliente.fromSnapShot(event.snapshot);
     });
   }
 
-  void _deleteFuncionario(
-      BuildContext context, Funcionario funcionario, int position) async {
-    await funcionarioReference.child(funcionario.id).remove().then((_) {
+  void _deleteCliente(
+      BuildContext context, Cliente cliente, int position) async {
+    await clienteReference.child(cliente.id).remove().then((_) {
       setState(() {
         items.removeAt(position);
         Navigator.of(context).pop();
@@ -191,29 +188,27 @@ class _ListViewFuncionarioState extends State<ListViewFuncionario> {
     });
   }
 
-  void _navigateToFuncionarioInformation(
-      BuildContext context, Funcionario funcionario) async {
+  void _navigateToClienteInformation(
+      BuildContext context, Cliente cliente) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => FuncionarioScreen(funcionario)),
+      MaterialPageRoute(builder: (context) => ClienteScreen(cliente)),
     );
   }
 
-  void _navigateToFuncionario(
-      BuildContext context, Funcionario funcionario) async {
+  void _navigateToCliente(BuildContext context, Cliente cliente) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => FuncionarioInformation(funcionario)),
+      MaterialPageRoute(builder: (context) => ClienteInformation(cliente)),
     );
   }
 
-  void _createNewFuncionario(BuildContext context) async {
+  void _createNewCliente(BuildContext context) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) =>
-              FuncionarioScreen(Funcionario(null, '', '', '', '', '', ''))),
+              ClienteScreen(Cliente(null, '', '', '', '', '', ''))),
     );
   }
 }

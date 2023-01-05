@@ -9,7 +9,7 @@ class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final formKey = GlobalKey<FormState>();
-  
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final GoogleSignIn googleUser = GoogleSignIn();
@@ -94,7 +94,40 @@ class LoginController extends GetxController {
       Future.delayed(
         Duration(seconds: 2),
         () {
-          Get.toNamed("/simbolos", arguments: user);
+          Get.toNamed("/clientes", arguments: user);
+        },
+      );
+      return userCredential.user;
+    } catch (e) {
+      print(e);
+
+      Get.snackbar('Error', 'Error al iniciar sesion con Google: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+  Future<User> signInWithGoogle2() async {
+    try {
+      UserCredential userCredential;
+
+      final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final GoogleAuthCredential googleAuthCredential =
+          GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      userCredential = await _auth.signInWithCredential(googleAuthCredential);
+
+      final user = userCredential.user;
+      Get.snackbar('Hola', 'Se registro ${user.displayName} con Google');
+      print('Ingreso Exitoso');
+
+      Future.delayed(
+        Duration(seconds: 2),
+        () {
+          Get.toNamed("/funcionarios", arguments: user);
         },
       );
       return userCredential.user;
