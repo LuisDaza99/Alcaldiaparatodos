@@ -226,7 +226,9 @@ class _LoginPageState extends State<LoginPage> {
                           Color(0xFF005bea),
                         ],
                         iconData: CustomIcons.linkedin,
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.toNamed("/principalpage2");
+                        },
                       )
                     ],
                   ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/scheduler.dart';
 import 'dart:async';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import 'package:MiAlcaldia/model/cliente.dart';
 import 'package:MiAlcaldia/ui/cliente/cliente_information.dart';
@@ -13,10 +16,16 @@ class ListViewCliente extends StatefulWidget {
 
 final clienteReference = FirebaseDatabase.instance.reference().child('cliente');
 
-class _ListViewClienteState extends State<ListViewCliente> {
+class _ListViewClienteState extends State<ListViewCliente>
+    with TickerProviderStateMixin {
   List<Cliente> items;
   StreamSubscription<Event> _onClienteAddedSubscription;
   StreamSubscription<Event> _onClienteChangedSubscription;
+  AnimationController _controller;
+  DateRangePickerController _controllerDatePicker = DateRangePickerController();
+
+  DateTime fechaInicial;
+  DateTime fechaFinal;
 
   @override
   void initState() {
@@ -44,6 +53,19 @@ class _ListViewClienteState extends State<ListViewCliente> {
           title: Text('Todos los clientes atendidos'),
           centerTitle: true,
           backgroundColor: Color.fromARGB(255, 38, 148, 192),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.filter_list),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return _datePickerRango(context, _controllerDatePicker);
+                    });
+              },
+            )
+          ],
         ),
         body: Center(
           child: ListView.builder(
@@ -85,7 +107,7 @@ class _ListViewClienteState extends State<ListViewCliente> {
                                     ),
                                   ),
                                   subtitle: Text(
-                                    '${items[position].fechanacimiento}',
+                                    '${items[position].fecha}',
                                     style: TextStyle(
                                       color: Color.fromARGB(255, 56, 52, 52),
                                       fontSize: 21.0,
@@ -210,5 +232,113 @@ class _ListViewClienteState extends State<ListViewCliente> {
           builder: (context) =>
               ClienteScreen(Cliente(null, '', '', '', '', '', ''))),
     );
+  }
+
+  Widget _datePickerRango(
+      BuildContext context, DateRangePickerController _controller) {
+    return AlertDialog(
+      insetPadding: EdgeInsets.zero,
+      contentPadding: EdgeInsets.zero,
+      content: Container(
+        width: 360.0,
+        height: 360.0,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    width: 3,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: SfDateRangePicker(
+                    onSelectionChanged:
+                        (DateRangePickerSelectionChangedArgs args) async {
+                      //Accion a realizar al cambiar las fechas
+                      _controller.selectedRange.endDate;
+                    },
+                    initialDisplayDate: DateTime.now(),
+                    controller: _controller,
+                    minDate: DateTime.utc(2023, 1, 1),
+                    initialSelectedDate: DateTime.now(),
+                    selectableDayPredicate: (DateTime dateTime) {
+                      if (dateTime.weekday == 7 || dateTime.weekday == 6) {
+                        return false;
+                      }
+                      return true;
+                    },
+                    enablePastDates: true,
+                    toggleDaySelection: true,
+                    showNavigationArrow: true,
+                    monthCellStyle: DateRangePickerMonthCellStyle(
+                      blackoutDatesDecoration: BoxDecoration(
+                          color: Colors.red,
+                          border: Border.all(
+                              color: const Color(0xFFF44436), width: 1),
+                          shape: BoxShape.circle),
+                      weekendDatesDecoration: BoxDecoration(
+                          border: Border.all(width: 1), shape: BoxShape.circle),
+                      specialDatesDecoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 6, 113, 122),
+                          border: Border.all(
+                              color: const Color(0xFF2B732F), width: 1),
+                          shape: BoxShape.circle),
+                      blackoutDateTextStyle: TextStyle(
+                          color: Colors.white,
+                          decoration: TextDecoration.lineThrough),
+                      specialDatesTextStyle:
+                          const TextStyle(color: Colors.white),
+                    ),
+                    monthViewSettings: const DateRangePickerMonthViewSettings(
+                        dayFormat: 'EEE',
+                        numberOfWeeksInView: 5,
+                        firstDayOfWeek: 7,
+                        enableSwipeSelection: true,
+                        showTrailingAndLeadingDates: true),
+                    view: DateRangePickerView.month,
+                    selectionMode: DateRangePickerSelectionMode.range,
+                    initialSelectedRange:
+                        PickerDateRange(DateTime.now(), DateTime.now()),
+                  ),
+                ),
+              ),
+            ),
+            MaterialButton(
+              child: Text("OK"),
+              onPressed: () {
+                if (_controller != null) {
+                  fechaInicial = _controller.selectedRange.startDate;
+                  fechaFinal = _controller.selectedRange.endDate;
+                  Navigator.pop(context);
+                }
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget getDateRangePicker() {
+    return Container(
+        height: 250,
+        child: Card(
+            child: SfDateRangePicker(
+          view: DateRangePickerView.month,
+          selectionMode: DateRangePickerSelectionMode.single,
+          onSelectionChanged: selectionChanged,
+        )));
+  }
+
+  void selectionChanged(DateRangePickerSelectionChangedArgs args) {
+    SchedulerBinding.instance.addPostFrameCallback((duration) {
+      setState(() {});
+    });
   }
 }

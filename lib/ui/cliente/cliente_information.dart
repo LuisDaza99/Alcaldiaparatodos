@@ -50,7 +50,10 @@ class _ClienteInformationState extends State<ClienteInformation> {
                 new Text("Area : ${widget.cliente.motivo}", style: TextStyle(fontSize: 18.0),),
                 Padding(padding: EdgeInsets.only(top: 8.0),),
                 Divider(),
-                new Text("Fecha De Nacimiento : ${widget.cliente.fechanacimiento}", style: TextStyle(fontSize: 18.0),),
+                new Text("Fecha: ${widget.cliente.fecha}", style: TextStyle(fontSize: 18.0),),
+                Padding(padding: EdgeInsets.only(top: 8.0),),
+                Divider(),
+                new Text("Hora: ${widget.cliente.hora}", style: TextStyle(fontSize: 18.0),),
                 Padding(padding: EdgeInsets.only(top: 8.0),),
                 Divider(),
                 Container(

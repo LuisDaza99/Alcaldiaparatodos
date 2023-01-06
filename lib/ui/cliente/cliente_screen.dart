@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:day_night_time_picker/day_night_time_picker.dart';
 //nuevo para imagenes
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -20,23 +21,43 @@ class ClienteScreen extends StatefulWidget {
 final clienteReference = FirebaseDatabase.instance.reference().child('cliente');
 
 class _ClienteScreenState extends State<ClienteScreen> {
+  TimeOfDay _time = TimeOfDay.now().replacing(hour: 11, minute: 30);
   var _currentSelectedDate;
   DateTime picked;
 
   void _pickDateDialog() async {
     picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.utc(2000, 1, 1),
-      firstDate: DateTime(1600),
-      lastDate: DateTime(2100),
+      initialDate: DateTime.now(),
+      lastDate: DateTime.now(),
+      firstDate: DateTime.now().add(Duration(days: -(365 * 150))),
     );
 
     if (picked != null) {
       setState(() {
-        _fechanacimientooController.text =
+        _fechaController.text =
             '${picked.year} - ${picked.month} - ${picked.day}';
       });
     }
+  }
+
+  void _showPicker() async {
+    Navigator.of(context).push(showPicker(
+      value: _time,
+      onChange: (TimeOfDay time) {
+        setState(() {
+          _time = time;
+        });
+
+        _horaController.text = '${_time.hour} - ${_time.minute}';
+
+        print(_time);
+      },
+      onChangeDateTime: (DateTime dateTime) {},
+      is24HrFormat: false,
+      iosStylePicker: true,
+      disableHour: false,
+    ));
   }
 
   List<Cliente> items;
@@ -45,7 +66,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
   TextEditingController _identificacionnController;
   TextEditingController _areaaController;
   TextEditingController _motivoController;
-  TextEditingController _fechanacimientooController;
+  TextEditingController _fechaController;
+  TextEditingController _horaController;
 
   //nuevo imagen
 
@@ -69,8 +91,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
         new TextEditingController(text: widget.cliente.identificacion);
     _areaaController = new TextEditingController(text: widget.cliente.areaa);
     _motivoController = new TextEditingController(text: widget.cliente.motivo);
-    _fechanacimientooController =
-        new TextEditingController(text: widget.cliente.fechanacimiento);
+    _fechaController = new TextEditingController(text: widget.cliente.fecha);
+    _horaController = new TextEditingController(text: widget.cliente.hora);
   }
 
   @override
@@ -82,7 +104,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(left: 1.0, right: 60.0, bottom: 80.0),
-              child: Image.asset("assets/diseño_interfaz/funcio.png"),
+              child: Image.asset("assets/diseño_interfaz/funcionarios03.png"),
             ),
             Expanded(
               child: Container(),
@@ -93,7 +115,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
         SingleChildScrollView(
           //height: 570.0,
 
-          padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 130.0),
+          padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 150.0),
           child: Card(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -152,13 +174,30 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     onTap: () {
                       _pickDateDialog();
                     },
-                    controller: _fechanacimientooController,
+                    controller: _fechaController,
                     readOnly: true,
                     style: TextStyle(
                         fontSize: 17.0, color: Colors.deepOrangeAccent),
                     decoration: InputDecoration(
                       icon: Icon(Icons.calendar_month_outlined),
-                      labelText: 'Fecha de nacimiento',
+                      labelText: 'Fecha',
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 1.0),
+                  ),
+                  Divider(),
+                  TextField(
+                    onTap: () {
+                      _showPicker();
+                    },
+                    controller: _horaController,
+                    readOnly: true,
+                    style: TextStyle(
+                        fontSize: 17.0, color: Colors.deepOrangeAccent),
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.timelapse),
+                      labelText: 'Hora',
                     ),
                   ),
                   Padding(
@@ -174,7 +213,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
                             'identificacion': _identificacionnController.text,
                             'area encargada': _areaaController.text,
                             'motivo': _motivoController.text,
-                            'fechanacimiento': _fechanacimientooController.text,
+                            'fecha': _fechaController.text,
+                            'fechapicked': picked.millisecondsSinceEpoch,
+                            'hora': _horaController.text,
                           }).then((_) {
                             Navigator.pop(context);
                           });
@@ -186,7 +227,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
                             'identificacion': _identificacionnController.text,
                             'area encargada': _areaaController.text,
                             'motivo': _motivoController.text,
-                            'fechanacimiento': _fechanacimientooController.text,
+                            'fecha': _fechaController.text,
+                            'fechapicked': picked.millisecondsSinceEpoch,
+                            'hora': _horaController.text,
                           }).then((_) {
                             Navigator.pop(context);
                           });
