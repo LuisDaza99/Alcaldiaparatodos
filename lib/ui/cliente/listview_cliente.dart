@@ -8,6 +8,8 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:MiAlcaldia/model/cliente.dart';
 import 'package:MiAlcaldia/ui/cliente/cliente_information.dart';
 import 'package:MiAlcaldia/ui/cliente/cliente_screen.dart';
+import 'package:logger/logger.dart';
+import 'package:colombia_holidays/colombia_holidays.dart';
 
 class ListViewCliente extends StatefulWidget {
   @override
@@ -19,10 +21,13 @@ final clienteReference = FirebaseDatabase.instance.reference().child('cliente');
 class _ListViewClienteState extends State<ListViewCliente>
     with TickerProviderStateMixin {
   List<Cliente> items;
+  List<Cliente> _itemsBackup = [];
+  List<DateTime> _listadiasFestivos = [];
   StreamSubscription<Event> _onClienteAddedSubscription;
   StreamSubscription<Event> _onClienteChangedSubscription;
   AnimationController _controller;
   DateRangePickerController _controllerDatePicker = DateRangePickerController();
+  ColombiaHolidays holidays = ColombiaHolidays();
 
   DateTime fechaInicial;
   DateTime fechaFinal;
@@ -35,6 +40,7 @@ class _ListViewClienteState extends State<ListViewCliente>
         clienteReference.onChildAdded.listen(_onClienteAdded);
     _onClienteChangedSubscription =
         clienteReference.onChildChanged.listen(_onClienteUpdate);
+    _cargarDiasFestivos();
   }
 
   @override
@@ -46,109 +52,106 @@ class _ListViewClienteState extends State<ListViewCliente>
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Color.fromARGB(255, 175, 203, 216),
-        appBar: AppBar(
-          title: Text('Todos los clientes atendidos'),
-          centerTitle: true,
-          backgroundColor: Color.fromARGB(255, 38, 148, 192),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.filter_list),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (BuildContext context) {
-                      return _datePickerRango(context, _controllerDatePicker);
-                    });
-              },
-            )
-          ],
-        ),
-        body: Center(
-          child: ListView.builder(
-              itemCount: items.length,
-              padding: EdgeInsets.only(top: 3.0),
-              itemBuilder: (context, position) {
-                return Column(
-                  children: <Widget>[
-                    Divider(
-                      height: 1.0,
-                    ),
-                    Container(
-                      padding: new EdgeInsets.all(15.0),
-                      child: Card(
-                        elevation: 5,
-                        child: Row(
-                          children: <Widget>[
-                            //nuevo contador
-                            CircleAvatar(
-                              backgroundColor:
-                                  Color.fromARGB(255, 175, 203, 216),
-                              radius: 17.0,
-                              child: Text(
-                                '${position + 1}',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 21.0,
-                                ),
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 175, 203, 216),
+      appBar: AppBar(
+        title: Text('Todos los clientes atendidos'),
+        centerTitle: true,
+        backgroundColor: Color.fromARGB(255, 38, 148, 192),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.filter_list),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return _datePickerRango(context, _controllerDatePicker);
+                  });
+            },
+          )
+        ],
+      ),
+      body: Center(
+        child: ListView.builder(
+            itemCount: items.length,
+            padding: EdgeInsets.only(top: 3.0),
+            itemBuilder: (context, position) {
+              return Column(
+                children: <Widget>[
+                  Divider(
+                    height: 1.0,
+                  ),
+                  Container(
+                    padding: new EdgeInsets.all(15.0),
+                    child: Card(
+                      elevation: 5,
+                      child: Row(
+                        children: <Widget>[
+                          //nuevo contador
+                          CircleAvatar(
+                            backgroundColor: Color.fromARGB(255, 175, 203, 216),
+                            radius: 17.0,
+                            child: Text(
+                              '${position + 1}',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 21.0,
                               ),
                             ),
+                          ),
 
-                            Expanded(
-                              child: ListTile(
-                                  title: Text(
-                                    '${items[position].nombre}',
-                                    style: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: 21.0,
-                                    ),
+                          Expanded(
+                            child: ListTile(
+                                title: Text(
+                                  '${items[position].nombre}',
+                                  style: TextStyle(
+                                    color: Colors.blueAccent,
+                                    fontSize: 21.0,
                                   ),
-                                  subtitle: Text(
-                                    '${items[position].fecha}',
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 56, 52, 52),
-                                      fontSize: 21.0,
-                                    ),
-                                  ),
-                                  onTap: () => _navigateToClienteInformation(
-                                      context, items[position])),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                              ),
-                              onPressed: () => _showDialog(context, position),
-                            ),
-
-                            //onPressed: () => _deleteCliente(context, items[position],position)),
-                            IconButton(
-                                icon: Icon(
-                                  Icons.remove_red_eye,
-                                  color: Colors.blueAccent,
                                 ),
-                                onPressed: () => _navigateToCliente(
+                                subtitle: Text(
+                                  '${items[position].fecha}',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 56, 52, 52),
+                                    fontSize: 21.0,
+                                  ),
+                                ),
+                                onTap: () => _navigateToClienteInformation(
                                     context, items[position])),
-                          ],
-                        ),
-                        color: Colors.white,
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            onPressed: () => _showDialog(context, position),
+                          ),
+
+                          //onPressed: () => _deleteCliente(context, items[position],position)),
+                          IconButton(
+                              icon: Icon(
+                                Icons.remove_red_eye,
+                                color: Colors.blueAccent,
+                              ),
+                              onPressed: () =>
+                                  _navigateToCliente(context, items[position])),
+                        ],
                       ),
+                      color: Colors.white,
                     ),
-                  ],
-                );
-              }),
+                  ),
+                ],
+              );
+            }),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
         ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-          backgroundColor: Color.fromARGB(255, 38, 148, 192),
-          onPressed: () => _createNewCliente(context),
-        ),
+        backgroundColor: Color.fromARGB(255, 38, 148, 192),
+        onPressed: () => _createNewCliente(context),
       ),
     );
   }
@@ -251,9 +254,7 @@ class _ListViewClienteState extends State<ListViewCliente>
                 width: MediaQuery.of(context).size.width * 0.80,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    width: 3,
-                  ),
+                 
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
@@ -265,10 +266,13 @@ class _ListViewClienteState extends State<ListViewCliente>
                     },
                     initialDisplayDate: DateTime.now(),
                     controller: _controller,
-                    minDate: DateTime.utc(2023, 1, 1),
+                    minDate: DateTime.utc(2022, 1, 1),
                     initialSelectedDate: DateTime.now(),
                     selectableDayPredicate: (DateTime dateTime) {
-                      if (dateTime.weekday == 7 || dateTime.weekday == 6) {
+                      if (dateTime.weekday == 7 ||
+                          dateTime.weekday == 6 ||
+                          (_listadiasFestivos.where(
+                              (element) => element == dateTime)).isNotEmpty) {
                         return false;
                       }
                       return true;
@@ -295,7 +299,8 @@ class _ListViewClienteState extends State<ListViewCliente>
                       specialDatesTextStyle:
                           const TextStyle(color: Colors.white),
                     ),
-                    monthViewSettings: const DateRangePickerMonthViewSettings(
+                    monthViewSettings: DateRangePickerMonthViewSettings(
+                        specialDates: _listadiasFestivos,
                         dayFormat: 'EEE',
                         numberOfWeeksInView: 5,
                         firstDayOfWeek: 7,
@@ -309,15 +314,48 @@ class _ListViewClienteState extends State<ListViewCliente>
                 ),
               ),
             ),
-            MaterialButton(
-              child: Text("OK"),
-              onPressed: () {
-                if (_controller != null) {
-                  fechaInicial = _controller.selectedRange.startDate;
-                  fechaFinal = _controller.selectedRange.endDate;
-                  Navigator.pop(context);
-                }
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 2),
+                  child: MaterialButton(
+                    child: Text("Cancelar"),
+                    onPressed: () {
+                      if (_itemsBackup.isNotEmpty) {
+                        setState(() {
+                          _controllerDatePicker = DateRangePickerController();
+                          items = _itemsBackup;
+                        });
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 2),
+                  child: MaterialButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      if (_controller != null) {
+                        fechaInicial = _controller.selectedRange.startDate;
+                        fechaFinal = (_controller.selectedRange.endDate == null)
+                            ? fechaInicial
+                            : _controller.selectedRange.endDate;
+                        Navigator.pop(context);
+                        Logger().i('FechaInicial: $fechaInicial');
+                        Logger().i('FechaFinal: $fechaFinal');
+                        filtrarLista(fechaInicial, fechaFinal);
+                      } else {
+                        if (_itemsBackup.isNotEmpty) {
+                          items = _itemsBackup;
+                        }
+                      }
+                    },
+                  ),
+                ),
+              ],
             )
           ],
         ),
@@ -340,5 +378,45 @@ class _ListViewClienteState extends State<ListViewCliente>
     SchedulerBinding.instance.addPostFrameCallback((duration) {
       setState(() {});
     });
+  }
+
+  void filtrarLista(DateTime fechaInicial, DateTime fechaFinal) {
+    if (_itemsBackup.length < 1) {
+      _itemsBackup = items;
+    }
+    var listaFiltrada = _itemsBackup
+        .where((cliente) =>
+            cliente.fechaPicked >= fechaInicial.millisecondsSinceEpoch &&
+            cliente.fechaPicked <= fechaFinal.millisecondsSinceEpoch)
+        .toList();
+
+    setState(() {
+      items = listaFiltrada;
+    });
+  }
+
+  _cargarDiasFestivos() async {
+    if (_listadiasFestivos.length == 0) {
+      DateTime fecha_fin = DateTime.now().add(Duration(days: 90));
+      final holidaysByYear2022 = await holidays.getHolidays(year: 2022);
+      for (var holiday in holidaysByYear2022) {
+        List<String> res = holiday.date.toString().split('/');
+        _listadiasFestivos.add(
+            DateTime(int.parse(res[2]), int.parse(res[1]), int.parse(res[0])));
+        if (_listadiasFestivos.last.isAfter(fecha_fin)) {
+          break;
+        }
+      }
+      final holidaysByYear2023 = await holidays.getHolidays(year: 2023);
+      for (var holiday in holidaysByYear2023) {
+        List<String> res = holiday.date.toString().split('/');
+        _listadiasFestivos.add(
+            DateTime(int.parse(res[2]), int.parse(res[1]), int.parse(res[0])));
+        if (_listadiasFestivos.last.isAfter(fecha_fin)) {
+          break;
+        }
+      }
+      setState(() {});
+    }
   }
 }

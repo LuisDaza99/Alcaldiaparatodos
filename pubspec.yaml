@@ -40,6 +40,11 @@ dependencies:
     audioplayer: ^0.8.1
     google_fonts: ^1.1.2
     syncfusion_flutter_datepicker: ^20.4.42
+    logger: ^1.1.0
+    colombia_holidays: ^2.0.2
+    flutter_localizations:
+        sdk: flutter
+    shared_preferences: ^2.0.15
     
     
     
