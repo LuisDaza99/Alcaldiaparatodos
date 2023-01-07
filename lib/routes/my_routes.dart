@@ -19,7 +19,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../ui/funcionario_page.dart';
 
 routes() => [
-      GetPage(name: "/home", page: () => LoginPage()),
+      GetPage(name: "/home", page: () => ListViewCliente()),
       GetPage(name: "/registration", page: () => RegisterPage()),
       GetPage(name: "/loginpage", page: () => LoginPage()),
       GetPage(name: "/logingoogle", page: () => LoginPage()),

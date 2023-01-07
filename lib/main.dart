@@ -7,21 +7,30 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'interfazUsuario/interfaz_Home.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import '/internationalization.dart';
 
 void main() async {
+  Locale _local = Locale('es', 'CO');
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(GetMaterialApp(
+    localizationsDelegates: [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+    ],
+    supportedLocales: [
+      _local,
+    ],
+    locale: _local,
     debugShowCheckedModeBanner: false,
     initialRoute: '/home',
     navigatorKey: Get.key,
     getPages: routes(),
   ));
 }
-
 
 class MyApp extends StatelessWidget {
   @override
@@ -36,7 +45,14 @@ class MyApp extends StatelessWidget {
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
     return MaterialApp(
-      
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('es', 'CO'),
+      ],
+      locale: const Locale('es', 'CO'),
       title: 'Alcaldia de todos',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

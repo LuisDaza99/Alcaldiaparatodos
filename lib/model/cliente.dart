@@ -7,10 +7,11 @@ class Cliente {
   String _areaa;
   String _motivo;
   String _fecha;
+  int fechaPicked;
   String _hora;
 
   Cliente(this._id, this._nombre, this._identificacion, this._areaa,
-      this._motivo, this._fecha, this._hora);
+      this._motivo, this._fecha, this._hora,{this.fechaPicked=0});
 
   Cliente.map(dynamic obj) {
     this._nombre = obj['nombre'];
@@ -19,7 +20,7 @@ class Cliente {
     this._motivo = obj['motivo'];
     this._fecha = obj['fecha'];
     this._hora = obj['hora'];
-
+    this.fechaPicked = obj['fechapicked'];
   }
 
   String get id => _id;
@@ -38,5 +39,6 @@ class Cliente {
     _motivo = snapshot.value['motivo'];
     _fecha = snapshot.value['fecha'];
     _hora = snapshot.value['hora'];
+    fechaPicked = snapshot.value['fechapicked'];
   }
 }
